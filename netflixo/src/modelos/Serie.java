@@ -1,10 +1,24 @@
 package modelos;
 
+import calculos.Classificavel;
+
 import java.util.Scanner;
 
-public class Serie extends Titulo{
-    int temporadas, episodios;
-    boolean emLancamento;
+public class Serie extends Titulo implements Classificavel {
+    private int temporadas, episodios;
+    private boolean emLancamento;
+
+    public boolean isEmLancamento() {
+        return emLancamento;
+    }
+
+    public int getEpisodios() {
+        return episodios;
+    }
+
+    public int getTemporadas() {
+        return temporadas;
+    }
 
     // essas funçao de baixo sao a mesma logica das do filme, a diferença é que eu adaptei pra cada um (nao coloquei em titulo por isso)
     public void printaFicha() {
@@ -55,5 +69,10 @@ public class Serie extends Titulo{
         this.emLancamento = emLancamento;
         this.temporadas = temporadas;
         this.episodios = episodios;
+    }
+
+    @Override
+    public float getClassificacao() {
+        return (float) this.somaDeNotas / this.numNotas;
     }
 }

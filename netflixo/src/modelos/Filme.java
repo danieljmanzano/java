@@ -1,10 +1,20 @@
 package modelos;
 
+import calculos.Classificavel;
+
 import java.util.Scanner;
 
-public class Filme extends Titulo{
+public class Filme extends Titulo implements Classificavel {
     private int duracao;
     private String diretor;
+
+    public String getDiretor() {
+        return diretor;
+    }
+
+    public int getDuracao() {
+        return duracao;
+    }
 
     public void printaFicha() {
         System.out.println("\n---- " + nome + " ----");
@@ -48,4 +58,8 @@ public class Filme extends Titulo{
         this.inclusoNoPlano = inclusoNoPlano;
     }
 
+    @Override
+    public float getClassificacao() {
+        return (float) this.somaDeNotas / this.numNotas;
+    }
 }
