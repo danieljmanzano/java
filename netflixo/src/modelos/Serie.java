@@ -5,15 +5,19 @@ import calculos.Classificavel;
 import java.util.Scanner;
 
 public class Serie extends Titulo implements Classificavel {
-    private int temporadas, episodios;
+    private int temporadas, numEpisodios;
     private boolean emLancamento;
 
     public boolean isEmLancamento() {
         return emLancamento;
     }
 
-    public int getEpisodios() {
-        return episodios;
+    public int getNumEpisodios() {
+        return numEpisodios;
+    }
+
+    public void setNumEpisodios(int numEpisodios) {
+        this.numEpisodios = numEpisodios;
     }
 
     public int getTemporadas() {
@@ -24,7 +28,7 @@ public class Serie extends Titulo implements Classificavel {
     public void printaFicha() {
         System.out.println("\n---- " + nome + " ----");
         System.out.println("começada em " + anoDeLancamento);
-        System.out.printf("%d temporadas e %d episódios lançados\n", temporadas, episodios);
+        System.out.printf("%d temporadas e %d episódios lançados\n", temporadas, numEpisodios);
         System.out.printf("nota média: %.2f. avaliado por %d usuários\n", (float) somaDeNotas / numNotas, numNotas);
 
         if (emLancamento)
@@ -51,7 +55,7 @@ public class Serie extends Titulo implements Classificavel {
         System.out.print("ano de lançamento: ");
         anoDeLancamento = leitura.nextInt();
         System.out.print("número de episódios: ");
-        episodios = leitura.nextInt();
+        numEpisodios = leitura.nextInt();
         System.out.print("número de temporadas: ");
         temporadas = leitura.nextInt();
         System.out.print("o filme está incluso no plano? (1/0) ");
@@ -68,11 +72,12 @@ public class Serie extends Titulo implements Classificavel {
         this.inclusoNoPlano = inclusoNoPlano;
         this.emLancamento = emLancamento;
         this.temporadas = temporadas;
-        this.episodios = episodios;
+        this.numEpisodios = episodios;
     }
 
     @Override
     public float getClassificacao() {
         return (float) this.somaDeNotas / this.numNotas;
     }
+
 }
