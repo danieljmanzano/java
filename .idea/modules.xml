@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/banco/banco.iml" filepath="$PROJECT_DIR$/banco/banco.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/java.iml" filepath="$PROJECT_DIR$/.idea/java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/netflixo/netflixo.iml" filepath="$PROJECT_DIR$/netflixo/netflixo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/primeiro/primeiro.iml" filepath="$PROJECT_DIR$/primeiro/primeiro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tabuleiro/tabuleiro.iml" filepath="$PROJECT_DIR$/tabuleiro/tabuleiro.iml" />
+    </modules>
+  </component>
+</project>
