@@ -1,12 +1,10 @@
-/*
-* alguns dos nomes de variáveis e de funções foram definidos especificamente no exercício, então talvez fique meio sem sentido pensando aos nomes que eu dou pras coisas
-*/
+// alguns dos nomes de variáveis e de funções foram definidos especificamente no exercício, então talvez fique meio sem sentido pensando aos nomes que eu dou pras coisas
 
 
 
 public class ArvBin {
-    private String[] heap;
-    private int len, quant; // len == tamanho máximo da heap. quant == posições ocupadas da heap
+    protected String[] heap;
+    protected int len, quant; // len == tamanho máximo da heap. quant == posições ocupadas da heap
 
     public ArvBin(int len) {
         this.len = len;
@@ -14,6 +12,22 @@ public class ArvBin {
         quant = 0;
         for (int i = 0; i < len; i++)
             heap[i] = "";
+    }
+
+
+    // método protegido para acesso seguro ao heap
+    protected String getNo(int index) {
+        if (index >= 0 && index < len) {
+            return heap[index];
+        }
+        return "";
+    }
+
+    // método protegido para modificar nós
+    protected void setNo(int index, String valor) {
+        if (index >= 0 && index < len) {
+            heap[index] = valor;
+        }
     }
 
 
@@ -25,7 +39,7 @@ public class ArvBin {
         return false;
     }
 
-    private int acha(String v) {
+    protected int acha(String v) {
         for (int i = 0; i < len; i++)
             if (v.compareTo(heap[i]) == 0)
                 return i;
@@ -50,7 +64,7 @@ public class ArvBin {
         quant++;
     }
 
-    private boolean insertAux(int index, String v) {
+    protected boolean insertAux(int index, String v) {
         if (index >= len) return false;
 
         if (heap[index].isEmpty()) {
@@ -66,16 +80,16 @@ public class ArvBin {
     }
 
 
-    private int filhoEsq(int index) {
+    protected int filhoEsq(int index) {
         return 2 * index + 1;
     }
 
 
-    private int filhoDir(int index) {
+    protected int filhoDir(int index) {
         return 2 * index + 2;
     }
 
-    private boolean indiceValido(int index) {
+    protected boolean indiceValido(int index) {
         return (index >= 0 && index < len && !heap[index].isEmpty());
     }
 
