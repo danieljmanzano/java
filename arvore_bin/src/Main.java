@@ -17,20 +17,22 @@ public class Main {
 
             if (partes[0].compareTo("i") == 0) {
                 arvbin.insert(partes[1]);
-                arvavl.insert(partes[1]);
                 arvbal.insert(partes[1]);
-            } else if (partes[0].compareTo("d") == 0){
-                if (!arvbin.remove(partes[1]) || !arvavl.remove(partes[1]) || !arvbal.remove(partes[1]))
-                    System.out.println("remoção falhou"); // teoricamente nao precisa dessa mensagem aqui, deixei mais pra eu ver mesmo
+                arvavl.insert(partes[1]);
+            } else if (partes[0].compareTo("d") == 0) {
+                arvbin.remove(partes[1]);
+                arvbal.remove(partes[1]);
+                arvavl.remove(partes[1]);
             }
 
         }
 
         System.out.println(arvbin.toString());
         System.out.println();
+        System.out.println(arvbal.toString());
+        System.out.println();
         System.out.println(arvavl.toString());
         System.out.println();
-        System.out.println(arvbal.toString());
 
     }
 }

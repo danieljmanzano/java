@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class ArvBal extends ArvBin {
 
     public ArvBal(int len) {
@@ -58,7 +61,6 @@ public class ArvBal extends ArvBin {
         return true;
     }
 
-    // Método para reconstruir a árvore garantindo balanceamento perfeito
     private void reconstruirArvoreBalanceada() {
         // Ordenar os elementos existentes
         String[] elementos = new String[quant];
@@ -71,33 +73,33 @@ public class ArvBal extends ArvBin {
             }
         }
 
-        // Ordenar o array de elementos
-        ordenar(elementos);
+        ordenar(elementos); // Ordena os elementos por ordem alfabética
 
-        // Reconstruir a árvore perfeitamente balanceada
-        quant = 0; // Resetar a contagem para a reconstrução
-        construirArvoreBalanceada(elementos, 0, elementos.length - 1, 0);
+        quant = 0;
+
+        // Inserir os elementos ordenados na árvore em ordem de nível (nível por nível, da esquerda para a direita)
+        fillPerfectlyBalanced(elementos);
     }
 
-    // Método auxiliar para construir árvore balanceada a partir de um array ordenado
-    private void construirArvoreBalanceada(String[] elementos, int inicio, int fim, int indexHeap) {
-        if (inicio > fim) return;
-        if (indexHeap >= len) return;  // Verificação adicional para segurança
+    private void fillPerfectlyBalanced(String[] elementos) {
+        // Usamos uma fila de índices para inserir em ordem de nível
+        Queue<Integer> fila = new LinkedList<>();
+        fila.add(0);
+        int i = 0;
 
-        // Encontrar o elemento do meio para ser o nó atual
-        int meio = (inicio + fim) / 2;
-        heap[indexHeap] = elementos[meio];
-        quant++;
+        while (!fila.isEmpty() && i < elementos.length) {
+            int idx = fila.poll();
+            if (idx >= len) continue;
 
-        // Construir recursivamente as subárvores esquerda e direita
-        if (inicio < meio) {
-            construirArvoreBalanceada(elementos, inicio, meio - 1, filhoEsq(indexHeap));
-        }
+            heap[idx] = elementos[i++];
+            quant++;
 
-        if (meio < fim) {
-            construirArvoreBalanceada(elementos, meio + 1, fim, filhoDir(indexHeap));
+            fila.add(filhoEsq(idx));
+            fila.add(filhoDir(idx));
         }
     }
+
+
 
     // Implementação simples de ordenação (merge sort)
     private void ordenar(String[] arr) {
@@ -142,14 +144,7 @@ public class ArvBal extends ArvBin {
         }
     }
 
-    // Método para verificar se a árvore está perfeitamente balanceada
-    public boolean estaPerfeitamenteBalanceada() {
-        // Uma árvore está perfeitamente balanceada se todos os níveis estão completos,
-        // exceto possivelmente o último, que deve estar preenchido da esquerda para a direita
-        return verificarBalanceamentoPerfeito(0, 0);
-    }
-
-    private boolean verificarBalanceamentoPerfeito(int index, int nivel) {
+    public boolean verificarBalanceamentoPerfeito(int index, int nivel) {
         if (!indiceValido(index)) return true;
 
         // Verificar se os filhos estão no nível esperado

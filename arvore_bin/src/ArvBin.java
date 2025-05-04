@@ -1,6 +1,3 @@
-// alguns dos nomes de variáveis e de funções foram definidos especificamente no exercício, então talvez fique meio sem sentido pensando aos nomes que eu dou pras coisas
-
-
 
 public class ArvBin {
     protected String[] heap;
@@ -13,23 +10,6 @@ public class ArvBin {
         for (int i = 0; i < len; i++)
             heap[i] = "";
     }
-
-
-    // método protegido para acesso seguro ao heap
-    protected String getNo(int index) {
-        if (index >= 0 && index < len) {
-            return heap[index];
-        }
-        return "";
-    }
-
-    // método protegido para modificar nós
-    protected void setNo(int index, String valor) {
-        if (index >= 0 && index < len) {
-            heap[index] = valor;
-        }
-    }
-
 
     public boolean find(String v) {
         for (int i = 0; i < len; i++)
@@ -48,7 +28,7 @@ public class ArvBin {
 
 
     public int len() {
-        // comicamente, apesar do nome da função, retorno aqui quantos elementos tem na heap (que é "quant", e nao "len")
+        // Comicamente, apesar do nome da função, retorno aqui quantos elementos tem na heap (que é "quant", e nao "len")
         return quant;
     }
 
@@ -126,6 +106,10 @@ public class ArvBin {
         StringBuilder sb = new StringBuilder();
         sb.append("digraph {\n"); // Início do formato DOT
 
+        // Para casos onde só existe a raíz (deve printar mesmo sem os filhos)
+        if (indiceValido(0) && !indiceValido(filhoDir(0)) && !indiceValido(filhoEsq(0)))
+            sb.append("\"").append(0).append(" ").append(heap[0]).append("\" ");
+
         // Percorre todos os nós não vazios
         for (int i = 0; i < len; i++) {
             if (indiceValido(i)) {
@@ -135,19 +119,20 @@ public class ArvBin {
 
                 // Filho esquerdo
                 if (indiceValido(filhoEsq(i))) {
-                    sb.append("\"").append(i).append(" ").append(heap[i]).append("\"")
-                            .append(" -> ")
-                            .append("\"").append(esq).append(" ").append(heap[esq]).append("\"")
+                    sb.append("\"").append(i).append(" ").append(heap[i]).append("\"");
+                            sb.append(" ->")
+                            .append("\"").append(esq).append(" ").append(heap[esq]).append("\" ")
                             .append("\n");
                 }
 
                 // Filho direito
                 if (indiceValido(filhoDir(i))) {
                     sb.append("\"").append(i).append(" ").append(heap[i]).append("\"")
-                            .append(" -> ")
-                            .append("\"").append(dir).append(" ").append(heap[dir]).append("\"")
+                            .append(" ->")
+                            .append("\"").append(dir).append(" ").append(heap[dir]).append("\" ")
                             .append("\n");
                 }
+
             }
         }
 
