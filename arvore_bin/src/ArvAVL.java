@@ -26,9 +26,9 @@ public class ArvAVL extends ArvBin {
 
         int childIndex;
         if (v.compareTo(heap[index]) < 0) {
-            childIndex = filhoEsq(index);
+            childIndex = nodeLeft(index);
         } else {
-            childIndex = filhoDir(index);
+            childIndex = nodeRight(index);
         }
 
         int insertedIndex = insertAVL(childIndex, v);
@@ -71,17 +71,17 @@ public class ArvAVL extends ArvBin {
         int balance = getBalance(index);
 
         if (balance > 1) {
-            if (getBalance(filhoEsq(index)) >= 0) {
+            if (getBalance(nodeLeft(index)) >= 0) {
                 rotateRight(index);
             } else {
-                rotateLeft(filhoEsq(index));
+                rotateLeft(nodeLeft(index));
                 rotateRight(index);
             }
         } else if (balance < -1) {
-            if (getBalance(filhoDir(index)) <= 0) {
+            if (getBalance(nodeRight(index)) <= 0) {
                 rotateLeft(index);
             } else {
-                rotateRight(filhoDir(index));
+                rotateRight(nodeRight(index));
                 rotateLeft(index);
             }
         }
@@ -90,72 +90,72 @@ public class ArvAVL extends ArvBin {
 
     private int getBalance(int index) {
         if (index < 0 || index >= len || heap[index].isEmpty()) return 0;
-        return height(filhoEsq(index)) - height(filhoDir(index));
+        return height(nodeLeft(index)) - height(nodeRight(index));
     }
 
     private int height(int index) {
         if (index < 0 || index >= len || heap[index].isEmpty()) return -1;
-        return 1 + Math.max(height(filhoEsq(index)), height(filhoDir(index)));
+        return 1 + Math.max(height(nodeLeft(index)), height(nodeRight(index)));
     }
 
     private void rotateLeft(int index) {
-        int right = filhoDir(index);
+        int right = nodeRight(index);
         if (!indiceValido(right)) return;
 
         String oldRoot = heap[index];
         String newRoot = heap[right];
 
-        int leftOfRight = filhoEsq(right);
-        int rightOfRight = filhoDir(right);
+        int leftOfRight = nodeLeft(right);
+        int rightOfRight = nodeRight(right);
 
         String[] leftSubtreeOfRight = cloneSubtree(leftOfRight);
         String[] rightSubtreeOfRight = cloneSubtree(rightOfRight);
-        String[] leftSubtreeOfRoot = cloneSubtree(filhoEsq(index));
+        String[] leftSubtreeOfRoot = cloneSubtree(nodeLeft(index));
 
         // Limpa as subárvores antigas
         clearSubtree(index);
 
         heap[index] = newRoot;
 
-        int newLeft = filhoEsq(index);
-        int newRight = filhoDir(index);
+        int newLeft = nodeLeft(index);
+        int newRight = nodeRight(index);
 
         if (newLeft < len) {
             heap[newLeft] = oldRoot;
 
-            restoreSubtree(leftSubtreeOfRoot, filhoEsq(newLeft));
-            restoreSubtree(leftSubtreeOfRight, filhoDir(newLeft));
+            restoreSubtree(leftSubtreeOfRoot, nodeLeft(newLeft));
+            restoreSubtree(leftSubtreeOfRight, nodeRight(newLeft));
         }
 
         restoreSubtree(rightSubtreeOfRight, newRight);
     }
 
     private void rotateRight(int index) {
-        int left = filhoEsq(index);
+        int left = nodeLeft(index);
         if (!indiceValido(left)) return;
 
         String oldRoot = heap[index];
         String newRoot = heap[left];
 
-        int rightOfLeft = filhoDir(left);
-        int leftOfLeft = filhoEsq(left);
+        int rightOfLeft = nodeRight(left);
+        int leftOfLeft = nodeLeft(left);
 
         String[] rightSubtreeOfLeft = cloneSubtree(rightOfLeft);
         String[] leftSubtreeOfLeft = cloneSubtree(leftOfLeft);
-        String[] rightSubtreeOfRoot = cloneSubtree(filhoDir(index));
+        String[] rightSubtreeOfRoot = cloneSubtree(nodeRight(index));
 
         clearSubtree(index);
 
         heap[index] = newRoot;
 
-        int newRight = filhoDir(index);
-        int newLeft = filhoEsq(index);
+        int newRight = nodeRight(index);
+        int newLeft = nodeLeft(index);
 
         if (newRight < len) {
             heap[newRight] = oldRoot;
 
-            restoreSubtree(rightSubtreeOfRoot, filhoDir(newRight));
-            restoreSubtree(rightSubtreeOfLeft, filhoEsq(newRight));
+            restoreSubtree(rightSubtreeOfRoot, nodeRight(newRight));
+            restoreSubtree(rightSubtreeOfLeft, nodeLeft(newRight));
         }
 
         restoreSubtree(leftSubtreeOfLeft, newLeft);
@@ -172,8 +172,8 @@ public class ArvAVL extends ArvBin {
         if (!indiceValido(indexOrig) || indexDest >= len) return;
 
         clone[indexDest] = heap[indexOrig];
-        cloneRecursive(filhoEsq(indexOrig), filhoEsq(indexDest), clone);
-        cloneRecursive(filhoDir(indexOrig), filhoDir(indexDest), clone);
+        cloneRecursive(nodeLeft(indexOrig), nodeLeft(indexDest), clone);
+        cloneRecursive(nodeRight(indexOrig), nodeRight(indexDest), clone);
     }
 
     private void restoreSubtree(String[] clone, int startIndex) {
@@ -185,15 +185,15 @@ public class ArvAVL extends ArvBin {
         if (clone[indexOrig] == null || clone[indexOrig].isEmpty()) return;
 
         heap[indexDest] = clone[indexOrig];
-        restoreRecursive(clone, filhoEsq(indexOrig), filhoEsq(indexDest));
-        restoreRecursive(clone, filhoDir(indexOrig), filhoDir(indexDest));
+        restoreRecursive(clone, nodeLeft(indexOrig), nodeLeft(indexDest));
+        restoreRecursive(clone, nodeRight(indexOrig), nodeRight(indexDest));
     }
 
     private void clearSubtree(int index) {
         if (index >= len || heap[index].isEmpty()) return;
 
-        clearSubtree(filhoEsq(index));
-        clearSubtree(filhoDir(index));
+        clearSubtree(nodeLeft(index));
+        clearSubtree(nodeRight(index));
         heap[index] = "";
     }
 }

@@ -94,8 +94,8 @@ public class ArvBal extends ArvBin {
             heap[idx] = elementos[i++];
             quant++;
 
-            fila.add(filhoEsq(idx));
-            fila.add(filhoDir(idx));
+            fila.add(nodeLeft(idx));
+            fila.add(nodeRight(idx));
         }
     }
 
@@ -144,20 +144,49 @@ public class ArvBal extends ArvBin {
         }
     }
 
-    public boolean verificarBalanceamentoPerfeito(int index, int nivel) {
-        if (!indiceValido(index)) return true;
+    @Override
+    public boolean isBalance(int index) {
+        int profundidadeEsperada = profundidadeFolha(index);
+        return verifica(index, 0, profundidadeEsperada);
+    }
 
-        // Verificar se os filhos estão no nível esperado
-        int esq = filhoEsq(index);
-        int dir = filhoDir(index);
+    // Retorna a profundidade de qualquer folha encontrada na subárvore
+    private int profundidadeFolha(int index) {
+        if (!indiceValido(index)) return 0;
 
-        // Se tem filho direito, deve ter filho esquerdo
-        if (indiceValido(dir) && !indiceValido(esq)) {
-            return false;
+        while (indiceValido(nodeLeft(index))) {
+            index = nodeLeft(index);
         }
 
-        // Verificar recursivamente os filhos
-        return verificarBalanceamentoPerfeito(esq, nivel + 1) &&
-                verificarBalanceamentoPerfeito(dir, nivel + 1);
+        int profundidade = 0;
+        while (index != 0) {
+            index = pai(index);
+            profundidade++;
+        }
+
+        return profundidade;
     }
+
+    // Verifica se todas as folhas estão no mesmo nível esperado
+    private boolean verifica(int index, int nivelAtual, int nivelEsperado) {
+        if (!indiceValido(index)) return true;
+
+        int esq = nodeLeft(index);
+        int dir = nodeRight(index);
+
+        // Nó folha
+        if (!indiceValido(esq) && !indiceValido(dir)) {
+            return nivelAtual == nivelEsperado;
+        }
+
+        // Verifica recursivamente filhos
+        return verifica(esq, nivelAtual + 1, nivelEsperado) &&
+                verifica(dir, nivelAtual + 1, nivelEsperado);
+    }
+
+    private int pai(int index) {
+        if (index == 0) return -1;
+        return (index - 1) / 2;
+    }
+
 }
