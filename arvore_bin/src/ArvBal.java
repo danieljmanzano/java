@@ -62,24 +62,36 @@ public class ArvBal extends ArvBin {
     }
 
     private void reconstruirArvoreBalanceada() {
-        // Ordenar os elementos existentes
+        // Coletar os elementos inseridos na ordem original
         String[] elementos = new String[quant];
         int pos = 0;
 
         for (int i = 0; i < len; i++) {
             if (!heap[i].isEmpty()) {
                 elementos[pos++] = heap[i];
-                heap[i] = ""; // Limpar os nós após coletar
+                heap[i] = ""; // limpar
             }
         }
 
-        ordenar(elementos); // Ordena os elementos por ordem alfabética
-
         quant = 0;
 
-        // Inserir os elementos ordenados na árvore em ordem de nível (nível por nível, da esquerda para a direita)
-        fillPerfectlyBalanced(elementos);
+        // Inserir por nível (simula árvore cheia da esquerda para a direita)
+        Queue<Integer> indices = new LinkedList<>();
+        indices.add(0);
+
+        int i = 0;
+        while (!indices.isEmpty() && i < pos) {
+            int atual = indices.poll();
+            if (atual >= len) continue;
+
+            heap[atual] = elementos[i++];
+            quant++;
+
+            indices.add(nodeLeft(atual));
+            indices.add(nodeRight(atual));
+        }
     }
+
 
     private void fillPerfectlyBalanced(String[] elementos) {
         // Usamos uma fila de índices para inserir em ordem de nível
