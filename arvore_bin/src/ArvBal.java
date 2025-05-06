@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class ArvBal extends ArvBin {
 
     public ArvBal(int len) {
@@ -59,36 +62,64 @@ public class ArvBal extends ArvBin {
     }
 
     private void reconstruirArvoreBalanceada() {
-        // Coletar elementos atuais
-        String[] elementos = new String[quant];
-        int pos = 0;
+        // 1) coleta e limpa
+        String[] elems = new String[quant];
+        int p = 0;
         for (int i = 0; i < len; i++) {
             if (!heap[i].isEmpty()) {
-                elementos[pos++] = heap[i];
+                elems[p++] = heap[i];
                 heap[i] = "";
             }
         }
-
         quant = 0;
 
-        // Ordenar os elementos para garantir ordem alfabética
-        ordenar(elementos);
+        // 2) ordena os elementos
+        ordenar(elems);
 
-        // Inserir balanceadamente na árvore
-        construirBalanceado(elementos, 0, elementos.length - 1, 0);
+        // 3) reconstrói em BST height‑balanced com bias
+        construirBalanceado(elems, 0, p - 1, /* heapIndex= */ 0, /* isRight= */ false);
     }
 
-    private void construirBalanceado(String[] elementos, int ini, int fim, int index) {
+    /**
+     * @param elems   array ordenado de 0..p-1
+     * @param ini     início do segmento em elems
+     * @param fim     fim do segmento em elems
+     * @param index   posição no heap (array da árvore) onde colocar
+     * @param isRight se este nó é filho “direito” de seu pai
+     */
+    private void construirBalanceado(String[] elems,
+                                     int ini, int fim,
+                                     int index,
+                                     boolean isRight) {
         if (ini > fim || index >= len) return;
 
-        int meio = Math.floorDiv(ini + fim, 2); // obs.: talvez isso esteja causando problema nas ordenações (ou solucionando problemas). olhar aqui se quiser
+        int size = fim - ini + 1;
+        int meio;
 
-        heap[index] = elementos[meio];
+        if (size == 2) {
+            // 2 elementos: raiz usa segundo, subárvores usam primeiro
+            if (index == 0) {
+                meio = ini + 1;
+            } else {
+                meio = ini;
+            }
+        } else if (index > 0 && isRight) {
+            // subárvore direita maior bias → ceil
+            meio = (ini + fim + 1) / 2;
+        } else {
+            // raiz (exceto size==2) e subárvore esquerda → floor
+            meio = (ini + fim) / 2;
+        }
+
+        // coloca o nó
+        heap[index] = elems[meio];
         quant++;
 
-        construirBalanceado(elementos, ini, meio - 1, nodeLeft(index));
-        construirBalanceado(elementos, meio + 1, fim, nodeRight(index));
+        // recursa: esquerda (isRight=false), direita (isRight=true)
+        construirBalanceado(elems, ini, meio - 1, nodeLeft(index), false);
+        construirBalanceado(elems, meio + 1, fim, nodeRight(index), true);
     }
+
 
     // Implementação simples de ordenação (merge sort)
     private void ordenar(String[] arr) {
@@ -132,50 +163,4 @@ public class ArvBal extends ArvBin {
             arr[k++] = temp[i++];
         }
     }
-
-    @Override
-    public boolean isBalance(int index) {
-        int profundidadeEsperada = profundidadeFolha(index);
-        return verifica(index, 0, profundidadeEsperada);
-    }
-
-    // Retorna a profundidade de qualquer folha encontrada na subárvore
-    private int profundidadeFolha(int index) {
-        if (!indiceValido(index)) return 0;
-
-        while (indiceValido(nodeLeft(index))) {
-            index = nodeLeft(index);
-        }
-
-        int profundidade = 0;
-        while (index != 0) {
-            index = pai(index);
-            profundidade++;
-        }
-
-        return profundidade;
-    }
-
-    // Verifica se todas as folhas estão no mesmo nível esperado
-    private boolean verifica(int index, int nivelAtual, int nivelEsperado) {
-        if (!indiceValido(index)) return true;
-
-        int esq = nodeLeft(index);
-        int dir = nodeRight(index);
-
-        // Nó folha
-        if (!indiceValido(esq) && !indiceValido(dir)) {
-            return nivelAtual == nivelEsperado;
-        }
-
-        // Verifica recursivamente filhos
-        return verifica(esq, nivelAtual + 1, nivelEsperado) &&
-                verifica(dir, nivelAtual + 1, nivelEsperado);
-    }
-
-    private int pai(int index) {
-        if (index == 0) return -1;
-        return (index - 1) / 2;
-    }
-
 }

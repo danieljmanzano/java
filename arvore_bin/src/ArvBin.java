@@ -1,3 +1,4 @@
+import java.util.Arrays;
 
 public class ArvBin {
     protected String[] heap;
@@ -41,28 +42,28 @@ public class ArvBin {
     }
 
     public void insert(String v) {
+        // 1) capacidade e duplicata
         if (quant == len) {
             System.out.println("capacidade máxima alcançada!");
             return;
         }
-        if (find(v)) return;
 
-        insertAux(0, v);
-        quant++;
-    }
-
-    protected boolean insertAux(int index, String v) {
-        if (index >= len) return false;
-
-        if (heap[index].isEmpty()) {
-            heap[index] = v;
-            return true;
+        // 2) percorre iterativamente até achar um slot vazio
+        int i = 0;
+        while (i < len && !heap[i].isEmpty()) {
+            int cmp = v.compareTo(heap[i]);
+            if (cmp == 0) {
+                // já existe
+                return;
+            }
+            i = (cmp < 0) ? nodeLeft(i) : nodeRight(i);
         }
 
-        if (v.compareTo(heap[index]) < 0) {
-            return insertAux(nodeLeft(index), v);
-        } else {
-            return insertAux(nodeRight(index), v);
+        // 3) se coube no vetor, insere e conta
+        if (i < len) {
+            heap[i] = v;
+            quant++;
+            // se você estiver usando o _hook_ afterInsert, chama aqui:
         }
     }
 
@@ -82,28 +83,87 @@ public class ArvBin {
         int index = acha(v);
         if (index == -1) return false;
 
-        // Reconstruir a árvore do zero sem o elemento removido
-        String[] elementos = new String[quant - 1];
-        int pos = 0;
-        for (int i = 0; i < len; i++) {
-            if (!heap[i].isEmpty() && !heap[i].equals(v)) {
-                elementos[pos++] = heap[i];
-            }
+        int left = nodeLeft(index), right = nodeRight(index);
+        boolean noLeft  = left  >= len || heap[left].isEmpty();
+        boolean noRight = right >= len || heap[right].isEmpty();
+
+        // 1) nó folha
+        if (noLeft && noRight) {
+            heap[index] = "";
+            quant--;
+            return true;
         }
 
-        // Reinicializar a árvore
-        for (int i = 0; i < len; i++) {
-            heap[i] = "";
-        }
-        quant = 0;
-
-        // Reinserir todos os elementos
-        for (String elemento : elementos) {
-            insert(elemento);
+        // 2) só um filho -> sobe toda a subárvore
+        if (noLeft || noRight) {
+            int child = noLeft ? right : left;
+            String[] temp = Arrays.copyOf(heap, len);
+            adjust(child, child - index, temp);
+            quant--;
+            return true;
         }
 
+        // 3) dois filhos -> escolher sucessor mais próximo
+        //    a) maior da esquerda
+        int succL = left, distL = 1;
+        while (true) {
+            int r = nodeRight(succL);
+            if (r < len && !heap[r].isEmpty()) {
+                succL = r;
+                distL++;
+            } else break;
+        }
+        //    b) menor da direita
+        int succR = right, distR = 1;
+        while (true) {
+            int l = nodeLeft(succR);
+            if (l < len && !heap[l].isEmpty()) {
+                succR = l;
+                distR++;
+            } else break;
+        }
+        //    c) escolhe o mais próximo
+        int successor = (distL <= distR ? succL : succR);
+        String succVal = heap[successor];
+
+        // 4) remove o sucessor da sua posição original
+        int sLeft = nodeLeft(successor), sRight = nodeRight(successor);
+        boolean sNoLeft  = sLeft  >= len || heap[sLeft].isEmpty();
+        boolean sNoRight = sRight >= len || heap[sRight].isEmpty();
+
+        if (sNoLeft && sNoRight) {
+            heap[successor] = "";
+        } else {
+            int child = sNoLeft ? sRight : sLeft;
+            String[] temp = Arrays.copyOf(heap, len);
+            adjust(child, child - successor, temp);
+        }
+        quant--;
+
+        // 5) substitui valor no index original
+        heap[index] = succVal;
         return true;
     }
+
+    /**
+     * Move recursivamente a subárvore a partir de `filho` para cima em `diff`,
+     * usando `temp` como snapshot da árvore antes da remoção.
+     */
+    protected void adjust(int filho, int diff, String[] temp) {
+        if (filho >= len || temp[filho].isEmpty()) return;
+
+        // copia o valor para a nova posição
+        heap[filho - diff] = temp[filho];
+        // limpa o nó antigo se tiver sido movido
+        if (heap[filho - diff].equals(temp[filho])) {
+            heap[filho] = "";
+        }
+
+        // avança para os filhos, duplicando o deslocamento
+        adjust(nodeLeft(filho),  diff * 2, temp);
+        adjust(nodeRight(filho), diff * 2, temp);
+    }
+
 
     protected int countNodes(int i) {
         if (i < heap.length && !heap[i].isEmpty())
