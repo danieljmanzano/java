@@ -1,157 +1,48 @@
+import java.util.Arrays;
+
 public class ArvBal extends ArvBin {
 
     public ArvBal(int len) {
         super(len);
     }
 
-    // Sobrescreve o método de inserção para garantir árvore perfeitamente balanceada
     @Override
     public void insert(String v) {
-        if (quant == len) {
-            System.out.println("capacidade máxima alcançada!");
-            return;
-        }
-        if (find(v)) return;
-
-        // Adicionar temporariamente o elemento
-        // Encontrar uma posição vazia para armazenar temporariamente
-        for (int i = 0; i < len; i++) {
-            if (heap[i].isEmpty()) {
-                heap[i] = v;
-                quant++;
-                break;
-            }
-        }
-
-        // Reconstruir toda a árvore para garantir que esteja perfeitamente balanceada
-        reconstruirArvoreBalanceada();
+        super.insert(v);
+        balanceia();
     }
 
     @Override
     public boolean remove(String v) {
-        int index = acha(v);
-        if (index == -1) return false;
-
-        // Coletar todos os elementos exceto o que será removido
-        String[] elementos = new String[quant - 1];
-        int pos = 0;
-        for (int i = 0; i < len; i++) {
-            if (!heap[i].isEmpty() && !heap[i].equals(v)) {
-                elementos[pos++] = heap[i];
-            }
+        if (super.remove(v)) {
+            balanceia();
+            return true;
         }
 
-        // Reinicializar a árvore
-        for (int i = 0; i < len; i++) {
-            heap[i] = "";
-        }
-        quant = 0;
-
-        // Reconstruir a árvore com os elementos restantes
-        for (String elemento : elementos) {
-            heap[quant++] = elemento;
-        }
-
-        // Reconstruir para manter o balanceamento perfeito
-        reconstruirArvoreBalanceada();
-
-        return true;
+        return false;
     }
 
-    private void reconstruirArvoreBalanceada() {
-        // 1) coleta e limpa
-        String[] elems = new String[quant];
-        int p = 0;
-        for (int i = 0; i < len; i++) {
-            if (!heap[i].isEmpty()) {
-                elems[p++] = heap[i];
-                heap[i] = "";
-            }
+    protected void balanceia() {
+        if (!isBalance()) {
+            // Coleta os elementos não vazios, ordena e reconstrói
+            String[] nonEmpty = Arrays.stream(heap).filter(s -> !s.isEmpty()).sorted().toArray(String[]::new);
+
+            Arrays.fill(heap, "");
+            quant = 0;  // Resetar o contador
+            reconstruirArvoreBalanceada(nonEmpty, 0, nonEmpty.length - 1);
         }
-        quant = 0;
 
-        // 2) ordena
-        ordenar(elems);
-
-        // 3) reconstrói
-        construirBalanceado(elems, 0, p - 1, 0, false);
     }
 
+    private void reconstruirArvoreBalanceada(String[] nonEmpty, int start, int end) {
+        if (start > end) return;
 
-    private void construirBalanceado(String[] elems,
-                                     int ini, int fim,
-                                     int index,
-                                     boolean isRight) {
-        if (ini > fim || index >= len) return;
+        int mid = start + (end - start) / 2;
 
-        int size = fim - ini + 1;
-        int meio;
+        super.insert(nonEmpty[mid]);
 
-        // 1) Único caso especial: SEGMENTO de 2 elementos na RAIZ
-        if (size == 2 && index == 0) {
-            meio = ini + 1;
-        }
-        // 2) Segmentos maiores que 2 na SUBÁRVORE DIREITA
-        else if (size > 2 && isRight) {
-            // ceil‑mid
-            meio = (ini + fim + 1) / 2;
-        }
-        // 3) Em todos os outros casos (raízes de tamanhos !=2, subárvores esquerdas
-        //    e também TODOS os segmentos de size==2 que não sejam raiz), use floor‑mid
-        else {
-            meio = (ini + fim) / 2;
-        }
-
-        heap[index] = elems[meio];
-        quant++;
-
-        // recusa para esquerda e direita
-        construirBalanceado(elems, ini,    meio - 1, nodeLeft(index),  false);
-        construirBalanceado(elems, meio + 1, fim,     nodeRight(index), true);
+        reconstruirArvoreBalanceada(nonEmpty, start, mid - 1);
+        reconstruirArvoreBalanceada(nonEmpty, mid + 1, end);
     }
 
-
-
-    // Implementação simples de ordenação (merge sort)
-    private void ordenar(String[] arr) {
-        if (arr.length <= 1) return;
-
-        String[] temp = new String[arr.length];
-        mergeSort(arr, temp, 0, arr.length - 1);
-    }
-
-    private void mergeSort(String[] arr, String[] temp, int esq, int dir) {
-        if (esq < dir) {
-            int meio = esq + (dir - esq) / 2;
-
-            mergeSort(arr, temp, esq, meio);
-            mergeSort(arr, temp, meio + 1, dir);
-
-            merge(arr, temp, esq, meio, dir);
-        }
-    }
-
-    private void merge(String[] arr, String[] temp, int esq, int meio, int dir) {
-        // Copiar para o array temporário
-        for (int i = esq; i <= dir; i++) {
-            temp[i] = arr[i];
-        }
-
-        int i = esq;
-        int j = meio + 1;
-        int k = esq;
-
-        while (i <= meio && j <= dir) {
-            if (temp[i].compareTo(temp[j]) <= 0) {
-                arr[k++] = temp[i++];
-            } else {
-                arr[k++] = temp[j++];
-            }
-        }
-
-        // Copiar elementos restantes
-        while (i <= meio) {
-            arr[k++] = temp[i++];
-        }
-    }
 }

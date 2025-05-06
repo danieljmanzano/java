@@ -121,10 +121,7 @@ public class ArvBin {
         return true;
     }
 
-    /**
-     * Move recursivamente a subárvore a partir de `filho` para cima em `diff`,
-     * usando `temp` como snapshot da árvore antes da remoção.
-     */
+    // Move recursivamente a subárvore a partir de `filho` para cima em `diff`, usando `temp` como snapshot da árvore antes da remoção.
     protected void adjust(int filho, int diff, String[] temp) {
         if (filho >= len || temp[filho].isEmpty()) return;
 
@@ -140,7 +137,6 @@ public class ArvBin {
         adjust(nodeRight(filho), diff * 2, temp);
     }
 
-
     protected int countNodes(int i) {
         if (i < heap.length && !heap[i].isEmpty())
             return countNodes(nodeLeft(i)) + countNodes(nodeRight(i)) + 1;
@@ -148,11 +144,14 @@ public class ArvBin {
             return 0;
     }
 
-    protected boolean isBalance(int i) {
+    protected boolean isBalance() {
+        return isBalanceAux(0);
+    }
+
+    private boolean isBalanceAux(int i) {
         if (i < heap.length && !heap[i].isEmpty()) {
-            return Math.abs(countNodes(nodeLeft(i)) - countNodes(nodeRight(i))) <= 1 && isBalance(nodeLeft(i)) && isBalance(nodeRight(i));
-        } else
-            return true;
+            return Math.abs(countNodes(nodeLeft(i)) - countNodes(nodeRight(i))) <= 1 && isBalanceAux(nodeLeft(i)) && isBalanceAux(nodeRight(i));
+        } else return true;
     }
 
 

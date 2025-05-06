@@ -1,8 +1,14 @@
 import java.util.Scanner;
 
+/*--------------------------------------------
+autores:
+    Artur Kenzo Obara Kawazoe, n° USP 15652663
+    Daniel Jorge Manzano, n° USP 15446861
+--------------------------------------------*/
+
 public class Main {
     public static void main(String[] args) {
-        ArvBin arvbin = new ArvBin(100); // por algum motivo, o exercício exige que o construtor tenha um tamanho que define a árvore mas não entra com o valor para isso... aí coloquei 100
+        ArvBin arvbin = new ArvBin(100);
         ArvAVL arvavl = new ArvAVL(100);
         ArvBal arvbal = new ArvBal(100);
         Scanner scanner = new Scanner(System.in);
