@@ -1,6 +1,3 @@
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class ArvBal extends ArvBin {
 
     public ArvBal(int len) {
@@ -62,56 +59,36 @@ public class ArvBal extends ArvBin {
     }
 
     private void reconstruirArvoreBalanceada() {
-        // Coletar os elementos inseridos na ordem original
+        // Coletar elementos atuais
         String[] elementos = new String[quant];
         int pos = 0;
-
         for (int i = 0; i < len; i++) {
             if (!heap[i].isEmpty()) {
                 elementos[pos++] = heap[i];
-                heap[i] = ""; // limpar
+                heap[i] = "";
             }
         }
 
         quant = 0;
 
-        // Inserir por nível (simula árvore cheia da esquerda para a direita)
-        Queue<Integer> indices = new LinkedList<>();
-        indices.add(0);
+        // Ordenar os elementos para garantir ordem alfabética
+        ordenar(elementos);
 
-        int i = 0;
-        while (!indices.isEmpty() && i < pos) {
-            int atual = indices.poll();
-            if (atual >= len) continue;
-
-            heap[atual] = elementos[i++];
-            quant++;
-
-            indices.add(nodeLeft(atual));
-            indices.add(nodeRight(atual));
-        }
+        // Inserir balanceadamente na árvore
+        construirBalanceado(elementos, 0, elementos.length - 1, 0);
     }
 
+    private void construirBalanceado(String[] elementos, int ini, int fim, int index) {
+        if (ini > fim || index >= len) return;
 
-    private void fillPerfectlyBalanced(String[] elementos) {
-        // Usamos uma fila de índices para inserir em ordem de nível
-        Queue<Integer> fila = new LinkedList<>();
-        fila.add(0);
-        int i = 0;
+        int meio = Math.floorDiv(ini + fim, 2); // obs.: talvez isso esteja causando problema nas ordenações (ou solucionando problemas). olhar aqui se quiser
 
-        while (!fila.isEmpty() && i < elementos.length) {
-            int idx = fila.poll();
-            if (idx >= len) continue;
+        heap[index] = elementos[meio];
+        quant++;
 
-            heap[idx] = elementos[i++];
-            quant++;
-
-            fila.add(nodeLeft(idx));
-            fila.add(nodeRight(idx));
-        }
+        construirBalanceado(elementos, ini, meio - 1, nodeLeft(index));
+        construirBalanceado(elementos, meio + 1, fim, nodeRight(index));
     }
-
-
 
     // Implementação simples de ordenação (merge sort)
     private void ordenar(String[] arr) {
