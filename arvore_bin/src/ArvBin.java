@@ -42,42 +42,24 @@ public class ArvBin {
     }
 
     public void insert(String v) {
-        // 1) capacidade e duplicata
-        if (quant == len) {
-            System.out.println("capacidade máxima alcançada!");
-            return;
-        }
-
-        // 2) percorre iterativamente até achar um slot vazio
         int i = 0;
+
         while (i < len && !heap[i].isEmpty()) {
-            int cmp = v.compareTo(heap[i]);
-            if (cmp == 0) {
-                // já existe
-                return;
-            }
-            i = (cmp < 0) ? nodeLeft(i) : nodeRight(i);
+            int compara = v.compareTo(heap[i]);
+            if (compara == 0) return;
+            i = (compara < 0 ? nodeLeft(i) : nodeRight(i));
         }
 
-        // 3) se coube no vetor, insere e conta
-        if (i < len) {
-            heap[i] = v;
-            quant++;
-            // se você estiver usando o _hook_ afterInsert, chama aqui:
-        }
+        if (i < len) heap[i] = v;
     }
 
-    protected int nodeLeft(int index) {
-        return 2 * index + 1;
-    }
+    protected int nodeLeft(int index) { return 2 * index + 1; }
 
-    protected int nodeRight(int index) {
-        return 2 * index + 2;
-    }
+    protected int nodeRight(int index) { return 2 * index + 2; }
 
-    protected boolean indiceValido(int index) {
-        return (index >= 0 && index < len && !heap[index].isEmpty());
-    }
+    protected boolean indiceValido(int index) { return (index >= 0 && index < len && !heap[index].isEmpty()); }
+
+    protected int parent(int index) { return (index - 1) / 2; }
 
     public boolean remove(String v) {
         int index = acha(v);
@@ -105,30 +87,24 @@ public class ArvBin {
 
         // 3) dois filhos -> escolher sucessor mais próximo
         //    a) maior da esquerda
-        int succL = left, distL = 1;
-        while (true) {
-            int r = nodeRight(succL);
-            if (r < len && !heap[r].isEmpty()) {
-                succL = r;
-                distL++;
-            } else break;
-        }
+        int succL = nodeLeft(index);
+        while (nodeRight(succL) < len && indiceValido(nodeRight(succL)))
+            succL = nodeRight(succL);
         //    b) menor da direita
-        int succR = right, distR = 1;
-        while (true) {
-            int l = nodeLeft(succR);
-            if (l < len && !heap[l].isEmpty()) {
-                succR = l;
-                distR++;
-            } else break;
-        }
+        int succR = nodeRight(index);
+        while (nodeLeft(succR) < len && indiceValido(nodeLeft(succR)))
+            succR = nodeLeft(succR);
+
         //    c) escolhe o mais próximo
-        int successor = (distL <= distR ? succL : succR);
+        int successor = succR;
+        if (Math.abs(index - succL) < Math.abs(index - succR))
+            successor = succL;
+
         String succVal = heap[successor];
 
         // 4) remove o sucessor da sua posição original
         int sLeft = nodeLeft(successor), sRight = nodeRight(successor);
-        boolean sNoLeft  = sLeft  >= len || heap[sLeft].isEmpty();
+        boolean sNoLeft = sLeft >= len || heap[sLeft].isEmpty();
         boolean sNoRight = sRight >= len || heap[sRight].isEmpty();
 
         if (sNoLeft && sNoRight) {
@@ -155,7 +131,7 @@ public class ArvBin {
         // copia o valor para a nova posição
         heap[filho - diff] = temp[filho];
         // limpa o nó antigo se tiver sido movido
-        if (heap[filho - diff].equals(temp[filho])) {
+        if (heap[filho - diff].equals(heap[filho])) {
             heap[filho] = "";
         }
 

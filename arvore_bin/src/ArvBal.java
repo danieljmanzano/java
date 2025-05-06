@@ -1,6 +1,3 @@
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class ArvBal extends ArvBin {
 
     public ArvBal(int len) {
@@ -73,20 +70,14 @@ public class ArvBal extends ArvBin {
         }
         quant = 0;
 
-        // 2) ordena os elementos
+        // 2) ordena
         ordenar(elems);
 
-        // 3) reconstrói em BST height‑balanced com bias
-        construirBalanceado(elems, 0, p - 1, /* heapIndex= */ 0, /* isRight= */ false);
+        // 3) reconstrói
+        construirBalanceado(elems, 0, p - 1, 0, false);
     }
 
-    /**
-     * @param elems   array ordenado de 0..p-1
-     * @param ini     início do segmento em elems
-     * @param fim     fim do segmento em elems
-     * @param index   posição no heap (array da árvore) onde colocar
-     * @param isRight se este nó é filho “direito” de seu pai
-     */
+
     private void construirBalanceado(String[] elems,
                                      int ini, int fim,
                                      int index,
@@ -96,29 +87,29 @@ public class ArvBal extends ArvBin {
         int size = fim - ini + 1;
         int meio;
 
-        if (size == 2) {
-            // 2 elementos: raiz usa segundo, subárvores usam primeiro
-            if (index == 0) {
-                meio = ini + 1;
-            } else {
-                meio = ini;
-            }
-        } else if (index > 0 && isRight) {
-            // subárvore direita maior bias → ceil
+        // 1) Único caso especial: SEGMENTO de 2 elementos na RAIZ
+        if (size == 2 && index == 0) {
+            meio = ini + 1;
+        }
+        // 2) Segmentos maiores que 2 na SUBÁRVORE DIREITA
+        else if (size > 2 && isRight) {
+            // ceil‑mid
             meio = (ini + fim + 1) / 2;
-        } else {
-            // raiz (exceto size==2) e subárvore esquerda → floor
+        }
+        // 3) Em todos os outros casos (raízes de tamanhos !=2, subárvores esquerdas
+        //    e também TODOS os segmentos de size==2 que não sejam raiz), use floor‑mid
+        else {
             meio = (ini + fim) / 2;
         }
 
-        // coloca o nó
         heap[index] = elems[meio];
         quant++;
 
-        // recursa: esquerda (isRight=false), direita (isRight=true)
-        construirBalanceado(elems, ini, meio - 1, nodeLeft(index), false);
-        construirBalanceado(elems, meio + 1, fim, nodeRight(index), true);
+        // recusa para esquerda e direita
+        construirBalanceado(elems, ini,    meio - 1, nodeLeft(index),  false);
+        construirBalanceado(elems, meio + 1, fim,     nodeRight(index), true);
     }
+
 
 
     // Implementação simples de ordenação (merge sort)

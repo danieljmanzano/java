@@ -24,7 +24,6 @@ public class Main {
                 arvbal.remove(partes[1]);
                 arvavl.remove(partes[1]);
             }
-
         }
 
         System.out.println(arvbin.toString());
