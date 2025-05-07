@@ -1,199 +1,194 @@
+import java.util.Arrays;
 public class ArvAVL extends ArvBin {
 
     public ArvAVL(int len) {
         super(len);
     }
 
-    @Override
-    public void insert(String v) {
-        if (quant == len) {
-            System.out.println("Capacidade máxima alcançada!");
-            return;
+    private int nodeHeight(int current){
+        if(current >= this.heap.length || this.heap[current].isEmpty()){
+            return -1;
         }
-        if (find(v)) return;
-
-        insertAVL(0, v);
-        quant++;
+        return Math.max(nodeHeight(current*2 +1), nodeHeight(current*2 + 2)) + 1;
     }
 
-    private int insertAVL(int index, String v) {
-        if (index >= len || index < 0) return -1;
+    private int balanceFactor(int root){
+        return nodeHeight(root*2+1) - nodeHeight(root*2+2);
+    }
 
-        if (heap[index].isEmpty()) {
-            heap[index] = v;
-            return index;
+    private void deleteSubtree(int root){
+        if(root >= this.heap.length || this.heap[root].isEmpty())
+            return;
+        deleteSubtree(nodeLeft(root));
+        deleteSubtree(nodeRight(root));
+        this.heap[root] = "";
+    }
+
+    private void moveSubTree(String[] copy, int dest, int src){
+        if(src >= this.heap.length || copy[src].isEmpty() || dest >= this.heap.length){
+            return;
+        }
+        this.heap[dest] = copy[src];
+        moveSubTree(copy, nodeLeft(dest), nodeLeft(src));
+        moveSubTree(copy, nodeRight(dest), nodeRight(src));
+    }
+
+    private void rightRotation(int root){
+        int l = nodeLeft(root);
+        if(l >= this.heap.length || this.heap[l].isEmpty())
+            return;
+        String[] copy = Arrays.copyOf(this.heap, this.heap.length);
+
+        int r = nodeRight(root);
+        int ll = nodeLeft(l);
+        int lr = nodeRight(l);
+
+        String oldRoot = this.heap[root];
+        String newRoot = this.heap[l];
+
+        deleteSubtree(root);
+
+        this.heap[root] = newRoot;
+        int newR = nodeRight(root);
+        if(newR < this.heap.length){
+            this.heap[newR] = oldRoot;
         }
 
-        int childIndex;
-        if (v.compareTo(heap[index]) < 0) {
-            childIndex = nodeLeft(index);
-        } else {
-            childIndex = nodeRight(index);
+        if(lr < copy.length && !copy[lr].isEmpty()){
+            moveSubTree(copy, nodeLeft(newR), lr);
         }
 
-        int insertedIndex = insertAVL(childIndex, v);
-        if (insertedIndex == -1) return -1;
+        if(r < copy.length && !copy[r].isEmpty()){
+            moveSubTree(copy, nodeRight(newR), r);
+        }
 
-        rebalance(index);
-        return index;
+        if(ll < copy.length && !copy[ll].isEmpty()){
+            moveSubTree(copy, nodeLeft(root), ll);
+        }
+    }
+
+    private void leftRotation(int root){
+        int r = nodeRight(root);
+        if(r >= this.heap.length || this.heap[r].isEmpty())
+            return;
+        
+        String[] copy = Arrays.copyOf(this.heap, this.heap.length);
+        
+        int l = nodeLeft(root);
+        int rl = nodeLeft(r);
+        int rr = nodeRight(r);
+
+        String oldRoot = this.heap[root];
+        String newRoot = this.heap[r];
+
+        deleteSubtree(root);
+
+        this.heap[root] = newRoot;
+        int newL = nodeLeft(root);
+        if(newL < this.heap.length){
+            this.heap[newL] = oldRoot;
+        }
+
+        if(l < copy.length && !copy[l].isEmpty()){
+            moveSubTree(copy, nodeLeft(newL), l);
+        }
+
+        if(rl < copy.length && !copy[rl].isEmpty()){
+            moveSubTree(copy, nodeRight(newL), rl);
+        }
+
+        if(rr < copy.length && !copy[rr].isEmpty()){
+            moveSubTree(copy, nodeRight(root), rr);
+        }
+    }
+
+    private void balance(int root){
+        if(root >= this.heap.length || this.heap[root].isEmpty())
+            return;
+        int bf = balanceFactor(root);
+
+        if(bf == -2){
+            if(balanceFactor(nodeRight(root)) <= 0)
+                leftRotation(root);
+            else{
+                rightRotation(nodeRight(root));
+                leftRotation(root);
+            }
+        }
+        else if(bf == 2){
+            if(balanceFactor(nodeLeft(root)) >= 0)
+                rightRotation(root);
+            else{
+                leftRotation(nodeLeft(root));
+                rightRotation(root);
+            }
+        }
+        
+        if(root != 0)
+            balance((root-1)/2);
+    }
+
+    
+
+    @Override
+    public void insert(String v) {
+        super.insert(v);
+        int index = acha(v);
+        if(index != -1)
+            balance(index);
     }
 
     @Override
     public boolean remove(String v) {
         int index = acha(v);
-        if (index == -1) return false;
+        if(index == -1)
+            return false;
+        
+        boolean leftAbsent = nodeLeft(index) >= this.heap.length || this.heap[nodeLeft(index)].isEmpty();
+        boolean rightAbsent = nodeRight(index) >= this.heap.length || this.heap[nodeRight(index)].isEmpty();
 
-        // Reconstruir a árvore do zero sem o elemento removido
-        String[] elementos = new String[quant - 1];
-        int pos = 0;
-        for (int i = 0; i < len; i++) {
-            if (!heap[i].isEmpty() && !heap[i].equals(v)) {
-                elementos[pos++] = heap[i];
-            }
+        if(leftAbsent && rightAbsent){
+            this.heap[index] = "";
+            return true;
         }
 
-        // Reinicializar a árvore
-        for (int i = 0; i < len; i++) {
-            heap[i] = "";
-        }
-        quant = 0;
-
-        // Reinserir todos os elementos mantendo o balanceamento AVL
-        for (String elemento : elementos) {
-            insert(elemento);
+        if(leftAbsent){
+            String[] copy = Arrays.copyOf(heap, heap.length);
+            adjust(nodeRight(index), nodeRight(index)-index, copy);
+            balance(index);
+            return true;
         }
 
+        if(rightAbsent){
+            String[] copy = Arrays.copyOf(heap, heap.length);
+            adjust(nodeLeft(index), nodeLeft(index) - index, copy);
+            balance(index);
+            return true;
+        }
+
+        int substitute = nodeLeft(index);
+        while(nodeRight(substitute) < heap.length && !heap[nodeRight(substitute)].isEmpty()){
+            substitute = nodeRight(substitute);
+        }
+
+        String substituteString = heap[substitute];
+
+        leftAbsent = nodeLeft(substitute) >= heap.length || heap[nodeLeft(substitute)].isEmpty();
+        rightAbsent = nodeRight(substitute) >= heap.length || heap[nodeRight(substitute)].isEmpty();
+
+        if(leftAbsent && rightAbsent){
+            heap[substitute] = "";
+        }
+        else if(leftAbsent){
+            String[] copy = Arrays.copyOf(heap, heap.length);
+            adjust(nodeRight(substitute), nodeRight(substitute)-substitute, copy);
+        }
+        else if(rightAbsent){
+            String[] copy = Arrays.copyOf(heap, heap.length);
+            adjust(nodeLeft(substitute), nodeLeft(substitute)-substitute, copy);
+        }
+        heap[index] = substituteString;
+        balance(index);
         return true;
-    }
-
-
-    private void rebalance(int index) {
-        int balance = getBalance(index);
-
-        if (balance > 1) {
-            if (getBalance(nodeLeft(index)) >= 0) {
-                rotateRight(index);
-            } else {
-                rotateLeft(nodeLeft(index));
-                rotateRight(index);
-            }
-        } else if (balance < -1) {
-            if (getBalance(nodeRight(index)) <= 0) {
-                rotateLeft(index);
-            } else {
-                rotateRight(nodeRight(index));
-                rotateLeft(index);
-            }
-        }
-    }
-
-
-    private int getBalance(int index) {
-        if (index < 0 || index >= len || heap[index].isEmpty()) return 0;
-        return height(nodeLeft(index)) - height(nodeRight(index));
-    }
-
-    private int height(int index) {
-        if (index < 0 || index >= len || heap[index].isEmpty()) return -1;
-        return 1 + Math.max(height(nodeLeft(index)), height(nodeRight(index)));
-    }
-
-    private void rotateLeft(int index) {
-        int right = nodeRight(index);
-        if (!indiceValido(right)) return;
-
-        String oldRoot = heap[index];
-        String newRoot = heap[right];
-
-        int leftOfRight = nodeLeft(right);
-        int rightOfRight = nodeRight(right);
-
-        String[] leftSubtreeOfRight = cloneSubtree(leftOfRight);
-        String[] rightSubtreeOfRight = cloneSubtree(rightOfRight);
-        String[] leftSubtreeOfRoot = cloneSubtree(nodeLeft(index));
-
-        // Limpa as subárvores antigas
-        clearSubtree(index);
-
-        heap[index] = newRoot;
-
-        int newLeft = nodeLeft(index);
-        int newRight = nodeRight(index);
-
-        if (newLeft < len) {
-            heap[newLeft] = oldRoot;
-
-            restoreSubtree(leftSubtreeOfRoot, nodeLeft(newLeft));
-            restoreSubtree(leftSubtreeOfRight, nodeRight(newLeft));
-        }
-
-        restoreSubtree(rightSubtreeOfRight, newRight);
-    }
-
-    private void rotateRight(int index) {
-        int left = nodeLeft(index);
-        if (!indiceValido(left)) return;
-
-        String oldRoot = heap[index];
-        String newRoot = heap[left];
-
-        int rightOfLeft = nodeRight(left);
-        int leftOfLeft = nodeLeft(left);
-
-        String[] rightSubtreeOfLeft = cloneSubtree(rightOfLeft);
-        String[] leftSubtreeOfLeft = cloneSubtree(leftOfLeft);
-        String[] rightSubtreeOfRoot = cloneSubtree(nodeRight(index));
-
-        clearSubtree(index);
-
-        heap[index] = newRoot;
-
-        int newRight = nodeRight(index);
-        int newLeft = nodeLeft(index);
-
-        if (newRight < len) {
-            heap[newRight] = oldRoot;
-
-            restoreSubtree(rightSubtreeOfRoot, nodeRight(newRight));
-            restoreSubtree(rightSubtreeOfLeft, nodeLeft(newRight));
-        }
-
-        restoreSubtree(leftSubtreeOfLeft, newLeft);
-    }
-
-
-    private String[] cloneSubtree(int index) {
-        String[] clone = new String[len];
-        cloneRecursive(index, 0, clone);
-        return clone;
-    }
-
-    private void cloneRecursive(int indexOrig, int indexDest, String[] clone) {
-        if (!indiceValido(indexOrig) || indexDest >= len) return;
-
-        clone[indexDest] = heap[indexOrig];
-        cloneRecursive(nodeLeft(indexOrig), nodeLeft(indexDest), clone);
-        cloneRecursive(nodeRight(indexOrig), nodeRight(indexDest), clone);
-    }
-
-    private void restoreSubtree(String[] clone, int startIndex) {
-        restoreRecursive(clone, 0, startIndex);
-    }
-
-    private void restoreRecursive(String[] clone, int indexOrig, int indexDest) {
-        if (indexOrig >= len || indexDest >= len) return;
-        if (clone[indexOrig] == null || clone[indexOrig].isEmpty()) return;
-
-        heap[indexDest] = clone[indexOrig];
-        restoreRecursive(clone, nodeLeft(indexOrig), nodeLeft(indexDest));
-        restoreRecursive(clone, nodeRight(indexOrig), nodeRight(indexDest));
-    }
-
-    private void clearSubtree(int index) {
-        if (index >= len || heap[index].isEmpty()) return;
-
-        clearSubtree(nodeLeft(index));
-        clearSubtree(nodeRight(index));
-        heap[index] = "";
     }
 }
