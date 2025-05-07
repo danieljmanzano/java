@@ -1,5 +1,12 @@
 import java.util.Scanner;
 
+/*
+exercício para implementar árvores binárias (bst, avl e perf. balanceada) usando como base a representação em um vetor de strings (funciona como a visualização de uma heap)
+a ideia principal era treinar os conceitos de herança. a classe árvore binária seria a "base" para as outras duas subclasses
+sinceramente, não conseguimos fazer quase nada direito (que exercício maligno misericórdia) e nos baseamos no código do pedro prestes. créditos a ele
+*/
+
+
 /*--------------------------------------------
 autores:
     Artur Kenzo Obara Kawazoe, n° USP 15652663

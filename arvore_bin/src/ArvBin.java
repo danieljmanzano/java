@@ -12,6 +12,7 @@ public class ArvBin {
             heap[i] = "";
     }
 
+    // Função exigida pelo exercício, apesar de não ser usada...
     public boolean find(String v) {
         for (int i = 0; i < len; i++)
             if (v.compareTo(heap[i]) == 0)
@@ -20,6 +21,7 @@ public class ArvBin {
         return false;
     }
 
+    // A função find, só que útil
     protected int acha(String v) {
         for (int i = 0; i < len; i++)
             if (v.compareTo(heap[i]) == 0)
@@ -27,15 +29,19 @@ public class ArvBin {
         return -1;
     }
 
+    // Função exigida pelo exercício
     protected void setNode(int i, String v) {
         if (i < len) heap[i] = v;
     }
+
+    // Função exigida pelo exercício
 
     protected String getNode(int i) {
         if (indiceValido(i)) return heap[i];
         return ("");
     }
 
+    // Função exigida pelo exercício
     public int len() {
         // Comicamente, apesar do nome da função, retorno aqui quantos elementos tem na heap (que é "quant", e nao "len")
         return quant;
@@ -154,7 +160,7 @@ public class ArvBin {
         } else return true;
     }
 
-
+    // Print medonho do exercício
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("digraph {\n"); // Início do formato DOT
