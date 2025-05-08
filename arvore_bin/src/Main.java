@@ -38,7 +38,7 @@ public class Main {
                 arvavl.remove(partes[1]);
             }
         }
-
+        scanner.close();
         System.out.println(arvbin.toString());
         System.out.println();
         System.out.println(arvbal.toString());

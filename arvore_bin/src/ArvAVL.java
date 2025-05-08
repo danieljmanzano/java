@@ -24,14 +24,7 @@ public class ArvAVL extends ArvBin {
         this.heap[root] = "";
     }
 
-    private void moveSubTree(String[] copy, int dest, int src){
-        if(src >= this.heap.length || copy[src].isEmpty() || dest >= this.heap.length){
-            return;
-        }
-        this.heap[dest] = copy[src];
-        moveSubTree(copy, nodeLeft(dest), nodeLeft(src));
-        moveSubTree(copy, nodeRight(dest), nodeRight(src));
-    }
+    
 
     private void rightRotation(int root){
         int l = nodeLeft(root);
@@ -40,6 +33,8 @@ public class ArvAVL extends ArvBin {
         String[] copy = Arrays.copyOf(this.heap, this.heap.length);
 
         int r = nodeRight(root);
+        int rr = nodeRight(r);
+        int rl = nodeLeft(r);
         int ll = nodeLeft(l);
         int lr = nodeRight(l);
 
@@ -49,21 +44,20 @@ public class ArvAVL extends ArvBin {
         deleteSubtree(root);
 
         this.heap[root] = newRoot;
-        int newR = nodeRight(root);
-        if(newR < this.heap.length){
-            this.heap[newR] = oldRoot;
+        if(r < this.heap.length){
+            this.heap[r] = oldRoot;
         }
 
         if(lr < copy.length && !copy[lr].isEmpty()){
-            moveSubTree(copy, nodeLeft(newR), lr);
+            adjust(lr, lr - rl, copy);
         }
 
         if(r < copy.length && !copy[r].isEmpty()){
-            moveSubTree(copy, nodeRight(newR), r);
+            adjust(r, r - rr, copy);
         }
 
         if(ll < copy.length && !copy[ll].isEmpty()){
-            moveSubTree(copy, nodeLeft(root), ll);
+            adjust(ll, ll - l, copy);
         }
     }
 
@@ -75,6 +69,8 @@ public class ArvAVL extends ArvBin {
         String[] copy = Arrays.copyOf(this.heap, this.heap.length);
         
         int l = nodeLeft(root);
+        int lr = nodeRight(l);
+        int ll = nodeLeft(l);
         int rl = nodeLeft(r);
         int rr = nodeRight(r);
 
@@ -84,21 +80,20 @@ public class ArvAVL extends ArvBin {
         deleteSubtree(root);
 
         this.heap[root] = newRoot;
-        int newL = nodeLeft(root);
-        if(newL < this.heap.length){
-            this.heap[newL] = oldRoot;
+        if(l < this.heap.length){
+            this.heap[l] = oldRoot;
         }
 
         if(l < copy.length && !copy[l].isEmpty()){
-            moveSubTree(copy, nodeLeft(newL), l);
+            adjust(l, l - ll , copy);
         }
 
         if(rl < copy.length && !copy[rl].isEmpty()){
-            moveSubTree(copy, nodeRight(newL), rl);
+            adjust(rl,  rl - lr, copy);
         }
 
         if(rr < copy.length && !copy[rr].isEmpty()){
-            moveSubTree(copy, nodeRight(root), rr);
+            adjust(rr, rr - r, copy);
         }
     }
 
@@ -125,7 +120,7 @@ public class ArvAVL extends ArvBin {
         }
         
         if(root != 0)
-            balance((root-1)/2);
+            balance(parent(root));
     }
 
     
@@ -149,6 +144,7 @@ public class ArvAVL extends ArvBin {
 
         if(leftAbsent && rightAbsent){
             this.heap[index] = "";
+            quant--;
             return true;
         }
 
@@ -156,6 +152,7 @@ public class ArvAVL extends ArvBin {
             String[] copy = Arrays.copyOf(heap, heap.length);
             adjust(nodeRight(index), nodeRight(index)-index, copy);
             balance(index);
+            quant--;
             return true;
         }
 
@@ -163,6 +160,7 @@ public class ArvAVL extends ArvBin {
             String[] copy = Arrays.copyOf(heap, heap.length);
             adjust(nodeLeft(index), nodeLeft(index) - index, copy);
             balance(index);
+            quant--;
             return true;
         }
 
@@ -171,6 +169,7 @@ public class ArvAVL extends ArvBin {
             substitute = nodeRight(substitute);
         }
 
+        // o substituto foi escolhido como o maior da esquerda para coincidir com os casos testes
         String substituteString = heap[substitute];
 
         leftAbsent = nodeLeft(substitute) >= heap.length || heap[nodeLeft(substitute)].isEmpty();
