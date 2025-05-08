@@ -57,6 +57,7 @@ public class ArvBin {
         }
 
         if (i < len) heap[i] = v;
+        quant++;
     }
 
     protected int nodeLeft(int index) { return 2 * index + 1; }

@@ -189,6 +189,7 @@ public class ArvAVL extends ArvBin {
         }
         heap[index] = substituteString;
         balance(index);
+        quant--; // Como não é usado o super.remove, decrementa quant aqui
         return true;
     }
 }
