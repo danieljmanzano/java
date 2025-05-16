@@ -6,5 +6,11 @@ public class DVD extends Produto {
         this.idioma = idioma;
         this.genero = genero;
         this.nacionalidade = nacionalidade;
+        this.tipo = "DVD";
+    }
+
+    @Override
+    public String toString() { // nao saiu o runcodes ainda... nao sei como deve ser o print. depois arrumo
+        return "";
     }
 }

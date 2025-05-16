@@ -9,6 +9,12 @@ public class Livro extends Produto {
         this.editora = editora;
         this.paginas = paginas;
         this.idioma = idioma;
+        this.tipo = "Livro";
+    }
+
+    @Override
+    public String toString() { // nao saiu o runcodes ainda... nao sei como deve ser o print. depois arrumo
+        return "";
     }
 
 

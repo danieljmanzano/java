@@ -13,6 +13,7 @@ public class Main {
 
             switch (partes[0]) {
                 case "I": // inserir
+                    // esse monte de coisa nas chamadas é de acordo com as entradas do exercício, por isso ta assim
                     if (partes[1].compareTo("Livro") == 0) {
                         Livro l = new Livro(Integer.parseInt(partes[2]), partes[3], partes[4], partes[5],
                                             Integer.parseInt(partes[6]), Integer.parseInt(partes[7]),
@@ -32,19 +33,22 @@ public class Main {
                     break;
 
                 case "A": // adicionar
-
+                    if (!loja.adicionar(Integer.parseInt(partes[1]), Integer.parseInt(partes[2])))
+                        System.out.println("erro na adição");;
                     break;
 
                 case "V": // vender
-
+                    if (!loja.vender(Integer.parseInt(partes[1]), Integer.parseInt(partes[2])))
+                        System.out.println("erro na venda");
                     break;
 
                 case "P": // procurar
-
+                    if(!loja.procurar(partes[1]))
+                        System.out.println("pesquisa mal sucedida");;
                     break;
 
                 case "S": // sumário
-
+                    loja.sumario();
                     break;
 
                 default: break;

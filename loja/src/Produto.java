@@ -1,6 +1,6 @@
 public class Produto {
     protected int codigo, ano;
-    protected String nome, autor;
+    protected String nome, autor, tipo;
 
     public Produto(int codigo, int ano, String nome, String autor) {
         this.codigo = codigo;
@@ -9,5 +9,8 @@ public class Produto {
         this.autor = autor;
     }
 
-
+    @Override
+    public String toString() {
+        return "nome: " + nome + ", codigo: " + codigo;
+    }
 }
