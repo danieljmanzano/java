@@ -2,7 +2,7 @@ public class CD extends Produto{
     private int num;
     private String gravadora;
 
-    public CD(int codigo, String nome, String autor, int num, String gravadora, int ano) {
+    public CD(String codigo, String nome, String autor, int num, String gravadora, int ano) {
         super(codigo, ano, nome, autor);
         this.num = num;
         this.gravadora = gravadora;
@@ -10,7 +10,14 @@ public class CD extends Produto{
     }
 
     @Override
-    public String toString() { // nao saiu o runcodes ainda... nao sei como deve ser o print. depois arrumo
-        return "";
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.append("Banda: ").append(autor).append("\n");
+        sb.append("Gravadora: ").append(gravadora).append("\n");
+        sb.append("Ano: ").append(ano).append("\n");
+        sb.append("trilhas: ").append(num).append("\n");
+        sb.append("\n");
+
+        return sb.toString();
     }
 }

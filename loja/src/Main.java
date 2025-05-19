@@ -9,42 +9,50 @@ public class Main {
             String linha = scanner.nextLine();
             if (linha.isEmpty()) break;
 
-            String[] partes = linha.split(", ");
+            String[] partes = linha.split(",");
 
             switch (partes[0]) {
                 case "I": // inserir
+                    System.out.print("Operação inserir ");
                     // esse monte de coisa nas chamadas é de acordo com as entradas do exercício, por isso ta assim
                     if (partes[1].compareTo("Livro") == 0) {
-                        Livro l = new Livro(Integer.parseInt(partes[2]), partes[3], partes[4], partes[5],
+                        System.out.println("livro: " + partes[2]);
+                        Livro l = new Livro(partes[2], partes[3], partes[4], partes[5],
                                             Integer.parseInt(partes[6]), Integer.parseInt(partes[7]),
                                             Integer.parseInt(partes[8]), partes[9]);
                         loja.inserir(l);
 
                     } else if (partes[1].compareTo("CD") == 0) {
-                        CD cd = new CD(Integer.parseInt(partes[2]), partes[3], partes[4], Integer.parseInt(partes[5]),
+                        System.out.println("CD: " + partes[2]);
+                        CD cd = new CD(partes[2], partes[3], partes[4], Integer.parseInt(partes[5]),
                                        partes[6], Integer.parseInt(partes[7]));
                         loja.inserir(cd);
 
                     } else if (partes[1].compareTo("DVD") == 0) {
-                        DVD dvd = new DVD(Integer.parseInt(partes[2]), partes[3], partes[4], partes[5], partes[6],
+                        System.out.println("DVD: " + Integer.parseInt(partes[2]));
+                        DVD dvd = new DVD(partes[2], partes[3], partes[4], partes[5], partes[6],
                                           Integer.parseInt(partes[7]), partes[8]);
                         loja.inserir(dvd);
                     }
+
+                    System.out.println();
                     break;
 
                 case "A": // adicionar
-                    if (!loja.adicionar(Integer.parseInt(partes[1]), Integer.parseInt(partes[2])))
-                        System.out.println("erro na adição");;
+                    loja.adicionar(partes[1], Integer.parseInt(partes[2]));
                     break;
 
                 case "V": // vender
-                    if (!loja.vender(Integer.parseInt(partes[1]), Integer.parseInt(partes[2])))
-                        System.out.println("erro na venda");
+                    System.out.println("Operação de compra: " + partes[1]);
+                    if (loja.vender(partes[1], Integer.parseInt(partes[2])))
+                        System.out.println("Operação realizada com sucesso: " + partes[1]);
                     break;
 
                 case "P": // procurar
+                    System.out.println("Procurando: " + partes[1]);
                     if(!loja.procurar(partes[1]))
-                        System.out.println("pesquisa mal sucedida");;
+                        System.out.println("Produto não encontrado: " + partes[1]);
+
                     break;
 
                 case "S": // sumário

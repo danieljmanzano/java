@@ -1,16 +1,22 @@
 public class Produto {
-    protected int codigo, ano;
-    protected String nome, autor, tipo;
+    protected int ano, quant;
+    protected String codigo, nome, autor, tipo;
 
-    public Produto(int codigo, int ano, String nome, String autor) {
+    public Produto(String codigo, int ano, String nome, String autor) {
         this.codigo = codigo;
         this.ano = ano;
         this.nome = nome;
         this.autor = autor;
+        this.quant = 0;
     }
 
     @Override
     public String toString() {
-        return "nome: " + nome + ", codigo: " + codigo;
+        StringBuilder sb = new StringBuilder();
+        sb.append(tipo).append("\n");
+        sb.append("Codigo: ").append(codigo).append("\n");
+        sb.append("Titulo: ").append(nome).append("\n");
+
+        return sb.toString();
     }
 }
