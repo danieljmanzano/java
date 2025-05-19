@@ -20,7 +20,7 @@ public class Livro extends Produto {
         sb.append("Edição: ").append(edicao).append("\n");
         sb.append("Ano: ").append(ano).append("\n");
         sb.append("Páginas: ").append(paginas).append("\n");
-        sb.append("Idioma: ").append(idioma).append("\n");
+        sb.append("Idioma: ").append(idioma);
 
         return sb.toString();
     }

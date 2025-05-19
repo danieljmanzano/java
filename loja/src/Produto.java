@@ -14,8 +14,8 @@ public class Produto {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(tipo).append("\n");
-        sb.append("Codigo: ").append(codigo).append("\n");
-        sb.append("Titulo: ").append(nome).append("\n");
+        sb.append("Código: ").append(codigo).append("\n");
+        sb.append("Título: ").append(nome).append("\n");
 
         return sb.toString();
     }

@@ -16,7 +16,7 @@ public class DVD extends Produto {
         sb.append("Gênero: ").append(genero).append("\n");
         sb.append("Ano: ").append(ano).append("\n");
         sb.append("Nacionalidade: ").append(nacionalidade).append("\n");
-        sb.append("Idioma: ").append(idioma).append("\n");
+        sb.append("Idioma: ").append(idioma);
 
         return sb.toString();
 

@@ -5,12 +5,11 @@ public class Loja {
     private ArrayList<Produto> produtos;
 
     public Loja() {
-        // como não tem tamanho definido, coloquei 1000 (talvez mexa depois? nao sei)
         this.produtos = new ArrayList<>();
         livros = cds = dvds = 0;
     }
 
-    /* insere um certo produto no "sistema" (não no estoque!) */
+    /* insere um certo produto no vetor (não incrementa a quantidade, apenas insere com quant == 0) */
     public void inserir(Produto p) {
         for (Produto prod : produtos) {
             if (prod.codigo.compareTo(p.codigo) == 0) {
@@ -23,7 +22,7 @@ public class Loja {
         System.out.println("Operação realizada com sucesso");
     }
 
-    /* adiciona "quant" unidades do produto especificado pelo código no estoque */
+    /* adiciona "quant" unidades do produto especificado pelo código */
     public boolean adicionar(String codigo, int quant) {
         for (Produto p : produtos) {
             if (p.codigo.compareTo(codigo) == 0) { // encontrou o produto
@@ -56,6 +55,7 @@ public class Loja {
                     else if (p.tipo.equals("DVD")) dvds -= quant;
 
                     return true;
+
                 } else {
                     System.out.println("***Erro: Estoque insuficiente: " + codigo + " Quantidade: " + quant);
                     return false;
@@ -68,12 +68,12 @@ public class Loja {
     }
 
 
-    /* busca um produto com base em nome ou em código. a lógica com o "ehNumero" decide qual o objeto de busca */
+    /* busca um produto com base em nome ou em código (str pode assumir qualquer um dos dois valores) */
     public boolean procurar(String str) {
         for (Produto p : produtos) {
             // busca pelo nome
             if (p.nome.compareTo(str) == 0) {
-                System.out.println("Encontrado: ");
+                System.out.println("Encontrado:");
                 System.out.println(p);
                 return true;
             }
@@ -82,7 +82,7 @@ public class Loja {
         for (Produto p : produtos) {
             // busca pelo codigo
             if (p.codigo.compareTo(str) == 0) {
-                System.out.println("Encontrado: ");
+                System.out.println("Encontrado:");
                 System.out.println(p);
                 return true;
             }
@@ -91,6 +91,7 @@ public class Loja {
         return false;
     }
 
+    // função que basicamente printa tudo que tem guardado (de um jeito formatado de acordo com o esperado do exercício)
     public void sumario() {
         System.out.println("Operação de sumarização: ");
 
@@ -99,9 +100,9 @@ public class Loja {
             if (p.tipo.compareTo("Livro") == 0) {
                 System.out.println(p);
                 System.out.println("Quantidade: " + p.quant);
+                System.out.println();
             }
         }
-        System.out.println();
         System.out.println("Quantidade de Livros: " + livros);
         System.out.println();
 
@@ -110,9 +111,9 @@ public class Loja {
             if (p.tipo.compareTo("CD") == 0) {
                 System.out.println(p);
                 System.out.println("Quantidade: " + p.quant);
+                System.out.println();
             }
         }
-        System.out.println();
         System.out.println("Quantidade de CDs: " + cds);
         System.out.println();
 
@@ -121,9 +122,9 @@ public class Loja {
             if (p.tipo.compareTo("DVD") == 0) {
                 System.out.println(p);
                 System.out.println("Quantidade: " + p.quant);
+                System.out.println();
             }
         }
-        System.out.println();
         System.out.println("Quantidade de DVDs: " + dvds);
         System.out.println();
     }

@@ -1,10 +1,10 @@
 public class CD extends Produto{
-    private int num;
+    private int trilhas;
     private String gravadora;
 
-    public CD(String codigo, String nome, String autor, int num, String gravadora, int ano) {
+    public CD(String codigo, String nome, String autor, int trilhas, String gravadora, int ano) {
         super(codigo, ano, nome, autor);
-        this.num = num;
+        this.trilhas = trilhas;
         this.gravadora = gravadora;
         this.tipo = "CD";
     }
@@ -15,8 +15,7 @@ public class CD extends Produto{
         sb.append("Banda: ").append(autor).append("\n");
         sb.append("Gravadora: ").append(gravadora).append("\n");
         sb.append("Ano: ").append(ano).append("\n");
-        sb.append("trilhas: ").append(num).append("\n");
-        sb.append("\n");
+        sb.append("trilhas: ").append(trilhas);
 
         return sb.toString();
     }
