@@ -58,31 +58,31 @@ public class Main {
 
         // a soma de "Active" de todos os países em que "Confirmed" é maior o igual que n1
         System.out.println(
-                infos.stream()                                     // stream de informações da lista
+                infos.stream() // stream de informações da lista
                         .filter(info -> info.confirmed >= n1) // filtra os infos com confirmed >= n1
-                        .mapToInt(info -> info.active)        // mapeia os valores de active dos infos resgatados
-                        .sum()                                     // soma os valores
+                        .mapToInt(info -> info.active) // mapeia os valores de active dos infos resgatados
+                        .sum() // soma os valores
         );
 
         // dentre os n2 países com maiores valores de "Active", a soma das "Deaths" dos n3 países com menores valores de "Confirmed".
         System.out.println(
-                infos.stream()                                                        // stream de informações da lista
-                        .sorted(Comparator.comparingInt(info -> -info.active))   // ordena por active em ordem decrescente
-                        .limit(n2)                                                    // pega os n2 primeiros (com mais active)
+                infos.stream() // stream de informações da lista
+                        .sorted(Comparator.comparingInt(info -> -info.active)) // ordena por active em ordem decrescente
+                        .limit(n2) // pega os n2 primeiros (com mais active)
                         .sorted(Comparator.comparingInt(info -> info.confirmed)) // ordena por confirmed crescente
-                        .limit(n3)                                                    // pega os n3 primeiros (menor confirmed entre os n2 com mais active)
-                        .mapToInt(info -> info.deaths)                           // mapeia os valores de death dos infos resgatados
-                        .sum()                                                        // soma os valores
+                        .limit(n3) // pega os n3 primeiros (menor confirmed entre os n2 com mais active)
+                        .mapToInt(info -> info.deaths) // mapeia os valores de death dos infos resgatados
+                        .sum() // soma os valores
         );
 
         // os n4 países com os maiores valores de "Confirmed". Os nomes devem estar em ordem alfabética.
         System.out.println(
-                infos.stream()                                                         // stream de informações da lista
+                infos.stream() // stream de informações da lista
                         .sorted(Comparator.comparingInt(info -> -info.confirmed)) // ordena por confirmed em ordem decrescente
-                        .limit(n4)                                                     // pega os n4 primeiros
-                        .map(info -> info.country)                                // mapeia os valores de country dos infos resgatados
-                        .sorted()                                                      // ordena com base lexicográfica
-                        .collect(Collectors.joining("\n"))                     // adiciona \n entre cada um dos infos
+                        .limit(n4) // pega os n4 primeiros
+                        .map(info -> info.country) // mapeia os valores de country dos infos resgatados
+                        .sorted() // ordena com base lexicográfica
+                        .collect(Collectors.joining("\n")) // adiciona \n entre cada um dos infos
         );
 
     }
